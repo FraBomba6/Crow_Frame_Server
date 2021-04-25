@@ -7,6 +7,6 @@ services:
     ports:
     - "3000:3000"
     volumes:
-    - ../db:/src/db
-    - ../experiments:/src/experiments
-    - ../query_pages:/src/query_pages
+    - ./db:/app/db
+    - ./experiments:/app/experiments
+    - ./query_pages:/app/query_pages

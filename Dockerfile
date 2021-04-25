@@ -15,10 +15,11 @@ RUN apt update -y
 RUN DEBIAN_FRONTEND=noninteractive apt -y install erlang-base erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key erlang-runtime-tools erlang-snmp erlang-ssl erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
 RUN DEBIAN_FRONTEND=noninteractive apt -y install rabbitmq-server --fix-missing postgresql postgresql-contrib
 RUN DEBIAN_FRONTEND=noninteractive apt -y install sudo nano
-WORKDIR /src
-COPY package*.json ./
+WORKDIR /app
+COPY src/ src/
+WORKDIR /app/src
 RUN npm install
 RUN npm install pm2 -g
-COPY . .
 EXPOSE 3000
+RUN chmod 744 ./services.sh
 CMD ./services.sh

@@ -1,8 +1,8 @@
 #!/bin/sh
 mv postgresql.conf /etc/postgresql/12/main/
-chown -R postgres:postgres /src/db
-if [ -z "$(ls -A /src/db)" ]; then
-  su - postgres -c '/usr/lib/postgresql/12/bin/pg_ctl -D /usr/local/pgsql/data initdb -D /src/db'
+chown -R postgres:postgres /app/db
+if [ -z "$(ls -A /app/db)" ]; then
+  su - postgres -c '/usr/lib/postgresql/12/bin/pg_ctl -D /usr/local/pgsql/data initdb -D /app/db'
 fi
 
 service postgresql start
@@ -13,7 +13,7 @@ fi
 
 sudo -u postgres 'psql' 'logDB' "-c ALTER USER postgres PASSWORD 'pass';"
 
-filename="/src/experiments"
+filename="/app/experiments"
 while read line
 do
   if [ "$line" != "" ] && ! sudo -u postgres 'psql' 'logDB' "-c SELECT to_regclass('public.$line');" | grep -q "$line"; then
