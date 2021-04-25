@@ -1,0 +1,8 @@
+node_modules
+*.py
+*.zip
+*.md
+db
+json
+.gitignore
+experiments
