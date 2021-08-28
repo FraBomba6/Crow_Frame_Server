@@ -6,12 +6,8 @@ const https = require('https')
 const numCPUs = require('os').cpus().length
 const amqp = require('amqplib')
 const db = require('./db')
-// const crypto = require("crypto")
 
 const port = 3000
-
-let inConnection = amqp.connect()
-let outConnection = amqp.connect()
 
 let experiments = fs.readFileSync('../experiments').toString().split("\n")
 
@@ -27,6 +23,8 @@ if (cluster.isMaster) {
     });
 
 } else {
+    let inConnection = amqp.connect()
+    let outConnection = amqp.connect()
     let inChannel = inConnection.then(connection => connection.createChannel())
     let outChannel = outConnection.then(connection => connection.createChannel())
 
@@ -44,7 +42,7 @@ if (cluster.isMaster) {
 
     app.post('/log', (req, res) => {
         res.status(200).end()
-        res.connection.end()
+        res.socket.end()
         req.body.server_time = new Date().getTime()
         if (req.body.sequence === 0) {
             let geolocation = lookup(req.body.details.ip)
@@ -104,8 +102,7 @@ if (cluster.isMaster) {
 
             channel.consume(queue, async function (msg) {
                 let parsed_msg = JSON.parse(msg.content.toString())
-                // parsed_msg['worker'] = crypto.randomBytes(6).toString('hex') //JUST FOR TESTING
-                db.log([parsed_msg['worker'], parsed_msg['sequence'], parsed_msg['batch'], parsed_msg['client_time'], parsed_msg['details'], parsed_msg['task'], parsed_msg['type'], parsed_msg['server_time']])
+                db.log([parsed_msg['worker'], parsed_msg['sequence'], parsed_msg['batch'], parsed_msg['client_time'], parsed_msg['details'], parsed_msg['task'], parsed_msg['type'], parsed_msg['server_time']], parsed_msg['task'], parsed_msg['batch'])
                     .then(() => {
                         channel.ack(msg)
                     })
@@ -117,9 +114,9 @@ if (cluster.isMaster) {
     }
 
     function lookup(ip) {
-        let url = 'http://ip-api.com/json/' + ip + '?fields=continentCode,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,reverse,mobile,proxy,hosting'
+        let url = 'https://ip-api.com/json/' + ip + '?fields=continentCode,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,reverse,mobile,proxy,hosting'
         return new Promise(resolve =>
-            http.get(url, res => {
+            https.get(url, res => {
                 let data = ''
 
                 res.on('data', (chunk) => {

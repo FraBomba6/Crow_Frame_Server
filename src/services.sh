@@ -1,9 +1,9 @@
 #!/bin/sh
-mv postgresql.conf /etc/postgresql/12/main/
-chown -R postgres:postgres /app/db
-if [ -z "$(ls -A /app/db)" ]; then
-  su - postgres -c '/usr/lib/postgresql/12/bin/pg_ctl -D /usr/local/pgsql/data initdb -D /app/db'
+if [ -z "$(ls -A /var/lib/postgresql/12/main)" ]; then
+  su - postgres -c '/usr/lib/postgresql/12/bin/pg_ctl -D /usr/local/pgsql/data initdb -D /var/lib/postgresql/12/main'
 fi
+chmod 700 -R /var/lib/postgresql/12/main
+chown -R postgres:postgres /var/lib/postgresql/12/main
 
 service postgresql start
 
@@ -23,3 +23,4 @@ done < $filename
 service rabbitmq-server start
 sudo rabbitmq-plugins enable rabbitmq_management
 sudo pm2-runtime start server.js
+

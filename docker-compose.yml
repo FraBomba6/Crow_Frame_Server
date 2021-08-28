@@ -1,12 +1,13 @@
 version: "3.9"
 services:
-  web:
+  crowd-frame-server:
     build:
       context: .
-    container_name: crowd-server
+    image: crowd-frame-server
+    container_name: crowd-frame-server
     ports:
     - "3000:3000"
     volumes:
-    - ./db:/app/db
+    - ./db:/var/lib/postgresql/12/main
     - ./experiments:/app/experiments
     - ./query_pages:/app/query_pages
