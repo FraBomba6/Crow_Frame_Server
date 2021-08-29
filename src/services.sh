@@ -1,9 +1,9 @@
 #!/bin/sh
+chmod 700 -R /var/lib/postgresql/12/main
+chown -R postgres:postgres /var/lib/postgresql/12/main
 if [ -z "$(ls -A /var/lib/postgresql/12/main)" ]; then
   su - postgres -c '/usr/lib/postgresql/12/bin/pg_ctl -D /usr/local/pgsql/data initdb -D /var/lib/postgresql/12/main'
 fi
-chmod 700 -R /var/lib/postgresql/12/main
-chown -R postgres:postgres /var/lib/postgresql/12/main
 
 service postgresql start
 
@@ -13,7 +13,7 @@ fi
 
 sudo -u postgres 'psql' 'logDB' "-c ALTER USER postgres PASSWORD 'pass';"
 
-filename="/app/experiments"
+filename="/app/experiments.txt"
 while read line
 do
   if [ "$line" != "" ] && ! sudo -u postgres 'psql' 'logDB' "-c SELECT to_regclass('public.$line');" | grep -q "$line"; then
