@@ -2,5 +2,5 @@ node_modules
 .idea
 db
 json
-experiments
+experiments.txt
 query_pages

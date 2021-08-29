@@ -9,7 +9,7 @@ const db = require('./db')
 
 const port = 3000
 
-let experiments = fs.readFileSync('../experiments').toString().split("\n")
+let experiments = fs.readFileSync('../experiments.txt').toString().split("\n")
 
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`)
