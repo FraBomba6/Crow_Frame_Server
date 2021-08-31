@@ -23,11 +23,15 @@ if (cluster.isMaster) {
         cluster.fork();
     });
 
-    cluster.on('message', (msg) => {
-        if (msg["request"] && msg["request"] === "increment") {
-            reqNum += 1
+    for (const id in cluster.workers) {
+        cluster.workers[id].on('message', messageHandler);
+    }
+
+    function messageHandler(msg) {
+        if (msg.cmd && msg.cmd === 'increment') {
+            reqNum += 1;
         }
-    });
+    }
 
     const app = express()
     app.use(express.json())
@@ -59,7 +63,7 @@ if (cluster.isMaster) {
     })
 
     app.post('/log', (req, res) => {
-        process.send({"request": "increment"})
+        process.send({cmd: "increment"})
         res.status(200).end()
         res.socket.end()
         req.body.server_time = new Date().getTime()
