@@ -32,7 +32,7 @@ if (cluster.isMaster) {
     app.listen(port+10, () => {
         console.log("Ready for statistics...")
     })
-    app.get('get', (req, res) => {
+    app.get('/requests', (req, res) => {
         res.status(200)
         res.json({reqNum: reqNum})
         res.socket.end()
