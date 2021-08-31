@@ -25,7 +25,7 @@ if (cluster.isMaster) {
 
     cluster.on('message', (msg) => {
         if (msg.increment) {
-            reqNum++;
+            reqNum += 1
         }
     });
 
