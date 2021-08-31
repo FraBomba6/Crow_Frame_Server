@@ -42,7 +42,7 @@ if (cluster.isMaster) {
     })
     app.get('/requests', (req, res) => {
         if (req.query['reset']){
-            process.send({"rest": true})
+            process.send({"reset": true})
         }
         res.status(200)
         res.json({"Requests Number": reqNum})
