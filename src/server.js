@@ -107,6 +107,7 @@ if (cluster.isMaster) {
                         channel.ack(msg)
                     })
                     .catch((e) => {
+                        console.log(e)
                         channel.nack(msg)
                     })
             })
