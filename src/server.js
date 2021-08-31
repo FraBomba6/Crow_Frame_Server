@@ -24,7 +24,7 @@ if (cluster.isMaster) {
     });
 
     cluster.on('message', (msg) => {
-        if (msg.request === 'increment') {
+        if (msg.increment) {
             reqNum++;
         }
     });
@@ -59,7 +59,7 @@ if (cluster.isMaster) {
     })
 
     app.post('/log', (req, res) => {
-        process.send({request: 'increment'})
+        process.send({increment: 1})
         res.status(200).end()
         res.socket.end()
         req.body.server_time = new Date().getTime()
