@@ -102,6 +102,7 @@ if (cluster.isMaster) {
 
             channel.consume(queue, async function (msg) {
                 let parsed_msg = JSON.parse(msg.content.toString())
+                parsed_msg['sequence'] += crypto.randomInt(0, 100) // FOR TESTING ONLY
                 db.log([parsed_msg['worker'], parsed_msg['sequence'], parsed_msg['batch'], parsed_msg['client_time'], parsed_msg['details'], parsed_msg['task'], parsed_msg['type'], parsed_msg['server_time']], parsed_msg['task'], parsed_msg['batch'])
                     .then(() => {
                         channel.ack(msg)
@@ -124,7 +125,6 @@ if (cluster.isMaster) {
                     data += chunk
                 });
                 res.on('end', () => {
-                    console.log(data)
                     resolve(JSON.parse(data))
                 });
             }))
