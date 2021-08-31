@@ -30,6 +30,8 @@ if (cluster.isMaster) {
     function messageHandler(msg) {
         if (msg.cmd && msg.cmd === 'increment') {
             reqNum += 1;
+        } else if (msg["reset"]) {
+            reqNum = 0;
         }
     }
 
@@ -39,6 +41,9 @@ if (cluster.isMaster) {
         console.log("Statistics ready!");
     })
     app.get('/requests', (req, res) => {
+        if (req.query['reset']){
+            process.send({"rest": true})
+        }
         res.status(200)
         res.json({"Requests Number": reqNum})
         res.socket.end()
