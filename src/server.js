@@ -23,20 +23,13 @@ if (cluster.isMaster) {
         cluster.fork();
     });
 
-    cluster.on('message', () => {
-        reqNum++;
+    cluster.on('message', (msg) => {
+        if (msg.request === 'increment') {
+            reqNum++;
+        } else if (msg.request === 'get') {
+            process.send({"Requests number": reqNum})
+        }
     });
-
-    const app = express()
-    app.use(express.json())
-    app.listen(port+10, () => {
-        console.log("Ready for statistics...")
-    })
-    app.get('/requests', (req, res) => {
-        res.status(200)
-        res.json({reqNum: reqNum})
-        res.socket.end()
-    })
 
 } else {
     let inConnection = amqp.connect()
@@ -56,8 +49,19 @@ if (cluster.isMaster) {
         console.log("Listening on port " + port + " as Worker " + cluster.worker.id + " running @ process " + cluster.worker.process.pid + "!");
     })
 
+    app.get('/requests', (req, res) => {
+        cluster.on('message', (msg) => {
+            if ("Requests number") {
+                res.status(200)
+                res.json(msg)
+                res.socket.end()
+            }
+        });
+        process.send({request: 'get'})
+    })
+
     app.post('/log', (req, res) => {
-        process.send({})
+        process.send({request: 'increment'})
         res.status(200).end()
         res.socket.end()
         req.body.server_time = new Date().getTime()
