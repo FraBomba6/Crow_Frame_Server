@@ -29,7 +29,7 @@ if (cluster.isMaster) {
 
     const app = express()
     app.use(express.json())
-    app.listen(port, () => {
+    app.listen(port+10, () => {
         console.log("Ready for statistics...")
     })
     app.get('get', (req, res) => {
