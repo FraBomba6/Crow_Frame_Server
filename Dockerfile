@@ -21,5 +21,6 @@ WORKDIR /app/src
 RUN npm install
 RUN npm install pm2 -g
 EXPOSE 3000
+EXPOSE 3010
 RUN chmod 744 ./services.sh
 CMD ./services.sh
