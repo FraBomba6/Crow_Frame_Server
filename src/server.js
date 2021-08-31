@@ -26,10 +26,19 @@ if (cluster.isMaster) {
     cluster.on('message', (msg) => {
         if (msg.request === 'increment') {
             reqNum++;
-        } else if (msg.request === 'get') {
-            process.send({"Requests number": reqNum})
         }
     });
+
+    const app = express()
+    app.use(express.json())
+    app.listen(3010, () => {
+        console.log("Statistics ready!");
+    })
+    app.get('/requests', (req, res) => {
+        res.status(200)
+        res.json({"Requests Number": reqNum})
+        res.socket.end()
+    })
 
 } else {
     let inConnection = amqp.connect()
@@ -47,17 +56,6 @@ if (cluster.isMaster) {
     app.use(express.json())
     app.listen(port, () => {
         console.log("Listening on port " + port + " as Worker " + cluster.worker.id + " running @ process " + cluster.worker.process.pid + "!");
-    })
-
-    app.get('/requests', (req, res) => {
-        cluster.on('message', (msg) => {
-            if ("Requests number") {
-                res.status(200)
-                res.json(msg)
-                res.socket.end()
-            }
-        });
-        process.send({request: 'get'})
     })
 
     app.post('/log', (req, res) => {
