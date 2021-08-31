@@ -31,7 +31,7 @@ if (cluster.isMaster) {
 
     const app = express()
     app.use(express.json())
-    app.listen(3010, () => {
+    app.listen(80, () => {
         console.log("Statistics ready!");
     })
     app.get('/requests', (req, res) => {
