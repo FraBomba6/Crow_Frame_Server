@@ -124,10 +124,11 @@ if (cluster.isMaster) {
                 });
                 res.on('end', () => {
                     try {
-                        resolve(JSON.parse(data))
+                        JSON.parse(data)
                     } catch (e) {
                         console.log(data)
                     }
+                    resolve()
                 });
             }))
     }
