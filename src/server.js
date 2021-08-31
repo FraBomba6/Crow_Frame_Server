@@ -30,8 +30,6 @@ if (cluster.isMaster) {
     function messageHandler(msg) {
         if (msg.cmd && msg.cmd === 'increment') {
             reqNum += 1;
-        } else if (msg.cmd && msg.cmd === 'reset') {
-            reqNum = 0;
         }
     }
 
@@ -43,7 +41,7 @@ if (cluster.isMaster) {
     app.get('/requests', (req, res) => {
         if (req.query['reset']){
             console.log("Reset statistics")
-            process.send({cmd: "reset"})
+            reqNum = 0
         }
         res.status(200)
         res.json({"Requests Number": reqNum})
