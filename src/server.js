@@ -1,6 +1,5 @@
 const express = require('express')
 const cluster = require('cluster')
-const crypto = require('crypto')
 const fs = require("fs")
 const http = require('http')
 const https = require('https')
@@ -13,6 +12,7 @@ const port = 3000
 let experiments = fs.readFileSync('../experiments.txt').toString().split("\n")
 
 if (cluster.isMaster) {
+    let reqNum = 0;
     console.log(`Master ${process.pid} is running`)
 
     for (let i = 0; i < numCPUs; i++) {
@@ -22,6 +22,21 @@ if (cluster.isMaster) {
     cluster.on('exit', () => {
         cluster.fork();
     });
+
+    cluster.on('message', () => {
+        reqNum++;
+    });
+
+    const app = express()
+    app.use(express.json())
+    app.listen(port, () => {
+        console.log("Ready for statistics...")
+    })
+    app.get('get', (req, res) => {
+        res.status(200)
+        res.json({reqNum: reqNum})
+        res.socket.end()
+    })
 
 } else {
     let inConnection = amqp.connect()
@@ -42,6 +57,7 @@ if (cluster.isMaster) {
     })
 
     app.post('/log', (req, res) => {
+        process.send({})
         res.status(200).end()
         res.socket.end()
         req.body.server_time = new Date().getTime()
@@ -103,13 +119,12 @@ if (cluster.isMaster) {
 
             channel.consume(queue, async function (msg) {
                 let parsed_msg = JSON.parse(msg.content.toString())
-                //parsed_msg['sequence'] += Math.floor(Math.random() * 1001) // FOR TESTING ONLY
+                parsed_msg['sequence'] += Math.floor(Math.random() * 1001) // FOR TESTING ONLY
                 db.log([parsed_msg['worker'], parsed_msg['sequence'], parsed_msg['batch'], parsed_msg['client_time'], parsed_msg['details'], parsed_msg['task'], parsed_msg['type'], parsed_msg['server_time']], parsed_msg['task'], parsed_msg['batch'])
                     .then(() => {
                         channel.ack(msg)
                     })
                     .catch((e) => {
-                        console.log(e)
                         channel.nack(msg)
                     })
             })
