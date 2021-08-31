@@ -123,7 +123,11 @@ if (cluster.isMaster) {
                     data += chunk
                 });
                 res.on('end', () => {
-                    resolve(JSON.parse(data))
+                    try {
+                        resolve(JSON.parse(data))
+                    } catch (e) {
+                        console.log(data)
+                    }
                 });
             }))
     }
