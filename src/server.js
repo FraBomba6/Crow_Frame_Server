@@ -35,6 +35,7 @@ if (cluster.isMaster) {
         if (msg.cmd && msg.cmd === 'increment') {
             if (reqNum["total"] === 0){
                 console.log("Started counting...")
+                reqNum["initTime"] = Date.now()
                 http.get('http://95.232.239.39:9955/start', () => {})
                 counting = setInterval(() => {
                     let total = reqNum["total"]
