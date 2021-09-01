@@ -41,7 +41,7 @@ if (cluster.isMaster) {
                     let total = reqNum["total"]
                     reqNum[counter++] = total - totalPreviousRequests
                     totalPreviousRequests = total
-                }, 100)
+                }, 500)
             }
             reqNum["total"] += 1
         }
