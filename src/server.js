@@ -34,14 +34,16 @@ if (cluster.isMaster) {
                 console.log("Started counting...")
                 let counter = 1
                 let totalPreviousRequests = 0
-                setInterval(() => {
+                let counting = setInterval(() => {
                     let total = reqNum["total"]
                     reqNum[counter++] = total - totalPreviousRequests
                     totalPreviousRequests = total
-                }, 1000)
+                    if (counter === 150){
+                        counting.destroy()
+                    }
+                }, 200)
             }
-            reqNum["total"] += 1;
-
+            reqNum["total"] += 1
         }
     }
 
