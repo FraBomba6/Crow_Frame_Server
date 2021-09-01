@@ -28,20 +28,17 @@ if (cluster.isMaster) {
         cluster.workers[id].on('message', messageHandler);
     }
 
-    function startCounting(){
-        let counter = 1
-        let totalPreviousRequests = 0
-        setInterval(() => {
-            let total = reqNum["total"]
-            reqNum[counter++] = total - totalPreviousRequests
-            totalPreviousRequests = total
-        }, 1000)
-    }
-
     function messageHandler(msg) {
         if (msg.cmd && msg.cmd === 'increment') {
-            if (reqNum === 0){
-                startCounting()
+            if (reqNum["total"] === 0){
+                console.log("Started counting...")
+                let counter = 1
+                let totalPreviousRequests = 0
+                setInterval(() => {
+                    let total = reqNum["total"]
+                    reqNum[counter++] = total - totalPreviousRequests
+                    totalPreviousRequests = total
+                }, 1000)
             }
             reqNum["total"] += 1;
 
