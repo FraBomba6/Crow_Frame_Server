@@ -12,7 +12,8 @@ const port = 3000
 let experiments = fs.readFileSync('../experiments.txt').toString().split("\n")
 
 if (cluster.isMaster) {
-    let reqNum = 0;
+    let reqNum = {"total": 0};
+
     console.log(`Master ${process.pid} is running`)
 
     for (let i = 0; i < numCPUs; i++) {
@@ -27,9 +28,23 @@ if (cluster.isMaster) {
         cluster.workers[id].on('message', messageHandler);
     }
 
+    function startCounting(){
+        let counter = 1
+        let totalPreviousRequests = 0
+        setInterval(() => {
+            let total = reqNum["total"]
+            reqNum[counter++] = total - totalPreviousRequests
+            totalPreviousRequests = total
+        }, 1000)
+    }
+
     function messageHandler(msg) {
         if (msg.cmd && msg.cmd === 'increment') {
-            reqNum += 1;
+            if (reqNum === 0){
+                startCounting()
+            }
+            reqNum["total"] += 1;
+
         }
     }
 
@@ -41,10 +56,10 @@ if (cluster.isMaster) {
     app.get('/requests', (req, res) => {
         if (req.query['reset']){
             console.log("Reset statistics")
-            reqNum = 0
+            reqNum = {"total": 0}
         }
         res.status(200)
-        res.json({"Requests Number": reqNum})
+        res.json(reqNum)
         res.socket.end()
     })
 
