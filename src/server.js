@@ -35,6 +35,7 @@ if (cluster.isMaster) {
         if (msg.cmd && msg.cmd === 'increment') {
             if (reqNum["total"] === 0){
                 console.log("Started counting...")
+                http.get('http://95.232.239.39:9955/start', () => {})
                 counting = setInterval(() => {
                     let total = reqNum["total"]
                     reqNum[counter++] = total - totalPreviousRequests
@@ -42,9 +43,6 @@ if (cluster.isMaster) {
                 }, 100)
             }
             reqNum["total"] += 1
-            if (counter === 1800) {
-                clearInterval(counting)
-            }
         }
     }
 
@@ -53,12 +51,15 @@ if (cluster.isMaster) {
     app.listen(3010, () => {
         console.log("Statistics ready!");
     })
+
     app.get('/requests', (req, res) => {
         if (req.query['reset']){
             console.log("Reset statistics")
             reqNum = {"total": 0}
             counter = 1
             totalPreviousRequests = 0
+        } else if (req.query['stop'] && counting != null) {
+            clearInterval(counting)
         }
         res.status(200)
         res.json(reqNum)
