@@ -61,10 +61,11 @@ if (cluster.isMaster) {
             totalPreviousRequests = 0
         } else if (req.query['stop'] && counting != null) {
             clearInterval(counting)
+        } else {
+            res.status(200)
+            res.json(reqNum)
+            res.socket.end()
         }
-        res.status(200)
-        res.json(reqNum)
-        res.socket.end()
     })
 
 } else {
