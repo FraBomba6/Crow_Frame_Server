@@ -41,6 +41,7 @@ if (cluster.isMaster) {
                     reqNum[counter] = {}
                     si.currentLoad()
                         .then(data => {
+                            reqNum[counter]["cpu"] = {}
                             reqNum[counter]["cpu"]["total"] = data["currentLoad"].toFixed(2)
                             data["cpus"].forEach((cpu, index) => reqNum[counter]["cpu"][index] = cpu["load"].toFixed(2))
                         })
