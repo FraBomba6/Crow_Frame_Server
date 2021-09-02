@@ -36,9 +36,9 @@ if (cluster.isMaster) {
         if (msg.cmd && msg.cmd === 'increment') {
             if (reqNum["total"] === 0){
                 console.log("Started counting...")
-                reqNum["initTime"] = Date.now()
                 http.get('http://95.232.239.39:9955/start', () => {})
                 counting = setInterval(() => {
+                    reqNum[counter] = {}
                     si.currentLoad()
                         .then(data => {
                             reqNum[counter]["cpu"]["total"] = data["currentLoad"].toFixed(2)
@@ -49,8 +49,7 @@ if (cluster.isMaster) {
                             reqNum[counter]["used_memory"] = (100 * data["used"]/data["total"]).toFixed(2)
                         })
                     let total = reqNum["total"]
-                    reqNum[counter]["count"] = total - totalPreviousRequests
-                    counter += 1
+                    reqNum[counter++]["count"] = total - totalPreviousRequests
                     totalPreviousRequests = total
                 }, 500)
             }
