@@ -49,7 +49,8 @@ if (cluster.isMaster) {
                             reqNum[counter]["used_memory"] = (100 * data["used"]/data["total"]).toFixed(2)
                         })
                     let total = reqNum["total"]
-                    reqNum[counter++]["count"] = total - totalPreviousRequests
+                    reqNum[counter]["count"] = total - totalPreviousRequests
+                    counter += 1
                     totalPreviousRequests = total
                 }, 500)
             }
