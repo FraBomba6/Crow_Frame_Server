@@ -59,15 +59,13 @@ if (cluster.isMaster) {
             reqNum = {"total": 0}
             counter = 1
             totalPreviousRequests = 0
-            res.socket.end()
         } else if (req.query['stop'] && counting != null) {
             clearInterval(counting)
-            res.socket.end()
         } else {
-            res.status(200)
             res.json(reqNum)
-            res.socket.end()
         }
+        res.status(200).end()
+        res.socket.end()
     })
 
 } else {
