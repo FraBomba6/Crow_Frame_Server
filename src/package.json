@@ -13,5 +13,8 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "pg": "^8.5.1"
+  },
+  "devDependencies": {
+    "systeminformation": "^5.8.7"
   }
 }

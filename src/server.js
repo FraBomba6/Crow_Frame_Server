@@ -6,6 +6,7 @@ const https = require('https')
 const numCPUs = require('os').cpus().length
 const amqp = require('amqplib')
 const db = require('./db')
+const si = require('systeminformation');
 
 const port = 3000
 
@@ -38,8 +39,17 @@ if (cluster.isMaster) {
                 reqNum["initTime"] = Date.now()
                 http.get('http://95.232.239.39:9955/start', () => {})
                 counting = setInterval(() => {
+                    si.currentLoad()
+                        .then(data => {
+                            reqNum[counter]["cpu"]["total"] = data["currentLoad"].toFixed(2)
+                            data["cpus"].forEach((cpu, index) => reqNum[counter]["cpu"][index] = cpu["load"].toFixed(2))
+                        })
+                    si.mem()
+                        .then(data => {
+                            reqNum[counter]["used_memory"] = (100 * data["used"]/data["total"]).toFixed(2)
+                        })
                     let total = reqNum["total"]
-                    reqNum[counter++] = total - totalPreviousRequests
+                    reqNum[counter++]["count"] = total - totalPreviousRequests
                     totalPreviousRequests = total
                 }, 500)
             }
