@@ -36,7 +36,6 @@ if (cluster.isMaster) {
         if (msg.cmd && msg.cmd === 'increment') {
             if (reqNum["total"] === 0){
                 console.log("Started counting...")
-                http.get('http://95.232.239.39:9955/start', () => {})
                 counting = setInterval(() => {
                     reqNum[counter] = {}
                     reqNum[counter]["cpus"] = os.cpus()
