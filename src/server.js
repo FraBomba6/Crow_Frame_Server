@@ -37,13 +37,14 @@ if (cluster.isMaster) {
             if (reqNum["total"] === 0){
                 console.log("Started counting...")
                 counting = setInterval(() => {
-                    reqNum[counter] = {}
-                    reqNum[counter]["timestamp"] = Date.now()
-                    reqNum[counter]["cpus"] = os.cpus()
-                    reqNum[counter]["freemem"] = os.freemem()
-                    reqNum[counter]["totalmem"] = os.totalmem()
                     let total = reqNum["total"]
-                    reqNum[counter++]["requests"] = total - totalPreviousRequests
+                    reqNum[counter++] = {
+                        "timestamp": Date.now(),
+                        "cpus": os.cpus(),
+                        "freemem": os.freemem(),
+                        "totalmem": os.totalmem(),
+                        "requests": total - totalPreviousRequests
+                    }
                     totalPreviousRequests = total
                 }, 500)
             }
