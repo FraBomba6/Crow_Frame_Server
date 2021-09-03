@@ -38,6 +38,7 @@ if (cluster.isMaster) {
                 console.log("Started counting...")
                 counting = setInterval(() => {
                     reqNum[counter] = {}
+                    reqNum[counter]["timestamp"] = Date.now()
                     reqNum[counter]["cpus"] = os.cpus()
                     reqNum[counter]["freemem"] = os.freemem()
                     reqNum[counter]["totalmem"] = os.totalmem()
